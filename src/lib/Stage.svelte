@@ -1,8 +1,12 @@
 <script lang="ts">
-	import { onMount, setContext } from 'svelte';
+	import { createEventDispatcher, onMount, setContext } from 'svelte';
 	import { writable } from 'svelte/store';
 	import Konva from 'konva';
 	import type { StageConfig } from 'konva/lib/Stage';
+	import addEventDispatchers from './events';
+
+	// Events
+	const dispatch = createEventDispatcher();
 
 	// Props
 	export let config: Omit<StageConfig, 'container'> = {};
@@ -17,6 +21,9 @@
 			container: 'container',
 			...config
 		});
+
+		addEventDispatchers(dispatch, stage);
+
 		stageStore.set(stage);
 	});
 </script>

@@ -3,6 +3,11 @@
 	import { writable, type Writable } from 'svelte/store';
 	import Konva from 'konva';
 	import type { GroupConfig } from 'konva/lib/Group';
+	import { createEventDispatcher } from 'svelte';
+	import addEventDispatchers from './events';
+
+	// Events
+	const dispatch = createEventDispatcher();
 
 	// Props
 	export let config: GroupConfig = {};
@@ -24,6 +29,9 @@
 
 	onMount(() => {
 		group = new Konva.Group(config);
+
+		addEventDispatchers(dispatch, group);
+
 		containerStore.set(group);
 	});
 

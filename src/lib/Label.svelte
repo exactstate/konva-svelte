@@ -3,6 +3,11 @@
 	import { writable, type Writable } from 'svelte/store';
 	import Konva from 'konva';
 	import type { LabelConfig } from 'konva/lib/shapes/Label';
+	import { createEventDispatcher } from 'svelte';
+	import addEventDispatchers from './events';
+
+	// Events
+	const dispatch = createEventDispatcher();
 
 	// Props
 	export let config: LabelConfig = {};
@@ -24,6 +29,9 @@
 
 	onMount(() => {
 		label = new Konva.Label(config);
+
+		addEventDispatchers(dispatch, label);
+
 		containerStore.set(label);
 	});
 

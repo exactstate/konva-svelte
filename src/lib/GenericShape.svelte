@@ -1,7 +1,11 @@
 <script lang="ts">
-	import { onMount, getContext, onDestroy } from 'svelte';
+	import { onMount, getContext, onDestroy, createEventDispatcher } from 'svelte';
 	import Konva from 'konva';
 	import type { Writable } from 'svelte/store';
+	import addEventDispatchers from './events';
+
+	// Events
+	const dispatch = createEventDispatcher();
 
 	// Props
 	export let shapeName:
@@ -41,6 +45,9 @@
 		} else {
 			shape = new Konva[shapeName](config);
 		}
+
+		// Add events
+		addEventDispatchers(dispatch, shape);
 	});
 
 	onDestroy(() => {

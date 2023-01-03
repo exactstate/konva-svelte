@@ -3,6 +3,11 @@
 	import { get, writable, type Writable } from 'svelte/store';
 	import Konva from 'konva';
 	import type { LayerConfig } from 'konva/lib/Layer';
+	import { createEventDispatcher } from 'svelte';
+	import addEventDispatchers from './events';
+
+	// Events
+	const dispatch = createEventDispatcher();
 
 	// Props
 	export let config: LayerConfig = {};
@@ -22,6 +27,9 @@
 
 	onMount(() => {
 		layer = new Konva.Layer(config);
+
+		addEventDispatchers(dispatch, layer);
+
 		containerStore.set(layer);
 	});
 
