@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Layer, Stage, Star, Text } from '$lib';
+	import { Layer, Stage, Rect, Text, Transformer } from '$lib';
 	import type Konva from 'konva';
-	import { hasContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	type StarConfig = {
 		id: string;
@@ -9,6 +9,8 @@
 		y: number;
 		rotation: number;
 		isDragging: boolean;
+		color: string;
+		selected: boolean;
 	};
 
 	function generateShapes() {
@@ -17,7 +19,9 @@
 			x: Math.random() * window.innerWidth,
 			y: Math.random() * window.innerHeight,
 			rotation: Math.random() * 180,
-			isDragging: false
+			color: '#' + (Math.random() * 0xfffff * 1000000).toString(16).slice(0, 6),
+			isDragging: false,
+			selected: false
 		}));
 	}
 
@@ -34,6 +38,8 @@
 
 		console.log(stage);
 	});
+
+	let transformer: Konva.Transformer;
 </script>
 
 <Stage
@@ -42,35 +48,50 @@
 		width: windowWidth,
 		height: windowHeight
 	}}
+	on:click={(e) => {
+		if (e.detail.target === stage) {
+			stars.forEach((star) => (star.selected = false));
+			transformer.nodes([]);
+		}
+	}}
 >
 	<Layer>
+		<Transformer
+			bind:transformer
+			config={{
+				rotationSnaps: [0, 45, 90, 135, 180, 225, 270, 315, 360]
+			}}
+		/>
+
 		<Text content="Click a star and drag" />
 		{#each stars as star (star.id)}
-			<Star
+			<Rect
 				config={{
 					id: star.id,
 					name: star.id,
+					width: 50,
+					height: 50,
 					x: star.x,
 					y: star.y,
-					numPoints: 5,
-					innerRadius: 20,
-					outerRadius: 40,
-					fill: 'green',
+					fill: star.color,
 					opacity: 0.8,
-					draggable: true,
-					rotation: star.rotation,
-					shadowColor: 'black',
-					shadowBlur: 10,
-					shadowOpacity: 0.6,
-					shadowOffsetX: star.isDragging ? 10 : 5,
-					shadowOffsetY: star.isDragging ? 10 : 5,
-					scaleX: star.isDragging ? 1.2 : 1,
-					scaleY: star.isDragging ? 1.2 : 1
+					draggable: star.selected,
+					rotation: star.rotation
 				}}
-				on:dragstart={() => {
+				on:click={(e) => {
+					console.log(e.detail.target);
+				}}
+				on:dblclick={(e) => {
+					// Unslect all other stars
+					stars.forEach((s) => (s.selected = false));
+
+					transformer.nodes([e.detail.target]);
+					star.selected = true;
+				}}
+				on:dragstart={(e) => {
 					star.isDragging = true;
 				}}
-				on:dragend={() => {
+				on:dragend={(e) => {
 					star.isDragging = false;
 				}}
 			/>

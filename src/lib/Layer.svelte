@@ -4,7 +4,7 @@
 	import Konva from 'konva';
 	import type { LayerConfig } from 'konva/lib/Layer';
 	import { createEventDispatcher } from 'svelte';
-	import addEventDispatchers from './events';
+	import { addEventDispatchers, addReactiveConfig } from './utils';
 
 	// Events
 	const dispatch = createEventDispatcher();
@@ -12,6 +12,7 @@
 	// Props
 	export let config: LayerConfig = {};
 	export let layer: Konva.Layer | undefined = undefined;
+	let prevConfig: LayerConfig;
 
 	// Store & Context
 	const containerStore = writable<Konva.Group | Konva.Layer | undefined>(undefined);
@@ -40,9 +41,12 @@
 		}
 	});
 
-	// Reactive config
-	$: if (layer) {
-		layer.setAttrs(config);
+	// Reactive Config
+	$: {
+		if (layer) {
+			addReactiveConfig(config, prevConfig, layer);
+			prevConfig = config;
+		}
 	}
 </script>
 

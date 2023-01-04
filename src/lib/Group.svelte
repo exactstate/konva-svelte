@@ -4,7 +4,7 @@
 	import Konva from 'konva';
 	import type { GroupConfig } from 'konva/lib/Group';
 	import { createEventDispatcher } from 'svelte';
-	import addEventDispatchers from './events';
+	import { addEventDispatchers, addReactiveConfig } from './utils';
 
 	// Events
 	const dispatch = createEventDispatcher();
@@ -12,6 +12,7 @@
 	// Props
 	export let config: GroupConfig = {};
 	export let group: Konva.Group | undefined = undefined;
+	let prevConfig: GroupConfig;
 
 	// Parent Container
 	const parentContainerStore = getContext('containerStore') as Writable<
@@ -42,9 +43,12 @@
 		}
 	});
 
-	// Reactive config
-	$: if (group) {
-		group.setAttrs(config);
+	// Reactive Config
+	$: {
+		if (group) {
+			addReactiveConfig(config, prevConfig, group);
+			prevConfig = config;
+		}
 	}
 </script>
 

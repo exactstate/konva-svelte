@@ -2,7 +2,7 @@
 	import { onMount, getContext, onDestroy, createEventDispatcher } from 'svelte';
 	import Konva from 'konva';
 	import { get, type Writable } from 'svelte/store';
-	import addEventDispatchers from './events';
+	import { addEventDispatchers, addReactiveConfig } from '../utils';
 
 	// Events
 	const dispatch = createEventDispatcher();
@@ -64,28 +64,11 @@
 	});
 
 	// Reactive Config
-	$: if (shape) {
-		if (prevConfig) {
-			// Compare prevConfig and config
-			// and update shape accordingly
-			const prevConfigKeys = Object.keys(prevConfig);
-			const configKeys = Object.keys(config);
-
-			// Loop over each new config
-			for (let i = 0; i < configKeys.length; i++) {
-				const key = configKeys[i];
-				const value = config[key];
-
-				// If the key is not in the previous config
-				// or the value has changed
-				if (!prevConfigKeys.includes(key) || prevConfig[key] !== value) {
-					// Update the shape
-					shape.setAttr(key, value);
-				}
-			}
+	$: {
+		if (shape) {
+			addReactiveConfig(config, prevConfig, shape);
+			prevConfig = config;
 		}
-
-		prevConfig = config;
 	}
 </script>
 

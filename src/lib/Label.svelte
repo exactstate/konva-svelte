@@ -4,7 +4,7 @@
 	import Konva from 'konva';
 	import type { LabelConfig } from 'konva/lib/shapes/Label';
 	import { createEventDispatcher } from 'svelte';
-	import addEventDispatchers from './events';
+	import { addEventDispatchers, addReactiveConfig } from './utils';
 
 	// Events
 	const dispatch = createEventDispatcher();
@@ -12,6 +12,7 @@
 	// Props
 	export let config: LabelConfig = {};
 	export let label: Konva.Label | undefined = undefined;
+	let prevConfig: LabelConfig;
 
 	// Parent Container
 	const parentContainerStore = getContext('containerStore') as Writable<
@@ -42,9 +43,12 @@
 		}
 	});
 
-	// Reactive config
-	$: if (label) {
-		label.setAttrs(config);
+	// Reactive Config
+	$: {
+		if (label) {
+			addReactiveConfig(config, prevConfig, label);
+			prevConfig = config;
+		}
 	}
 </script>
 

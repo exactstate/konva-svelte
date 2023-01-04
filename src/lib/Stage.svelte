@@ -3,7 +3,7 @@
 	import { writable } from 'svelte/store';
 	import Konva from 'konva';
 	import type { StageConfig } from 'konva/lib/Stage';
-	import addEventDispatchers from './events';
+	import { addEventDispatchers, addReactiveConfig } from './utils';
 
 	// Events
 	const dispatch = createEventDispatcher();
@@ -11,6 +11,7 @@
 	// Props
 	export let config: Omit<StageConfig, 'container'> = {};
 	export let stage: Konva.Stage | undefined = undefined;
+	let prevConfig: Omit<StageConfig, 'container'>;
 
 	// Store & Context
 	export const stageStore = writable<Konva.Stage | undefined>(undefined);
@@ -27,9 +28,22 @@
 		stageStore.set(stage);
 	});
 
-	// Reactive config
-	$: if (stage) {
-		stage.setAttrs(config);
+	// Reactive Config
+	$: {
+		if (stage) {
+			addReactiveConfig(
+				{
+					container: 'container',
+					...config
+				},
+				{
+					container: 'container',
+					...prevConfig
+				},
+				stage
+			);
+			prevConfig = config;
+		}
 	}
 </script>
 

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type Konva from 'konva';
 	import GenericShape from './GenericShape.svelte';
-	import { createEventDispatcher } from 'svelte';
 
 	export let config: Konva.ArcConfig = {
 		innerRadius: 40,
