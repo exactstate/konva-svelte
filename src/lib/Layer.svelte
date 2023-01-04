@@ -39,6 +39,11 @@
 			layer.destroy();
 		}
 	});
+
+	// Reactive config
+	$: if (layer) {
+		layer.setAttrs(config);
+	}
 </script>
 
 <slot />

@@ -2,14 +2,18 @@
 	import type Konva from 'konva';
 	import GenericShape from './GenericShape.svelte';
 
-	export let config: Konva.TextConfig = {};
+	export let content: string;
+	export let config: Omit<Konva.TextConfig, 'text'> = {};
 	export let text: Konva.Text | undefined = undefined;
 </script>
 
 <GenericShape
 	bind:shape={text}
 	shapeName="Text"
-	{config}
+	config={{
+		...config,
+		text: content
+	}}
 	on:mouseover
 	on:mouseout
 	on:mouseenter

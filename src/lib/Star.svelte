@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type Konva from 'konva';
+	import { onMount } from 'svelte';
 	import GenericShape from './GenericShape.svelte';
 
 	export let config: Konva.StarConfig = {
@@ -11,9 +12,9 @@
 </script>
 
 <GenericShape
+	{config}
 	bind:shape={star}
 	shapeName="Star"
-	{config}
 	on:mouseover
 	on:mouseout
 	on:mouseenter

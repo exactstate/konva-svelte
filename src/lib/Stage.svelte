@@ -26,6 +26,11 @@
 
 		stageStore.set(stage);
 	});
+
+	// Reactive config
+	$: if (stage) {
+		stage.setAttrs(config);
+	}
 </script>
 
 <div id="container" />

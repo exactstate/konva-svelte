@@ -41,6 +41,11 @@
 			group.destroy();
 		}
 	});
+
+	// Reactive config
+	$: if (group) {
+		group.setAttrs(config);
+	}
 </script>
 
 <slot />

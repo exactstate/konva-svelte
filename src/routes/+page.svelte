@@ -1,62 +1,79 @@
 <script lang="ts">
-	import Stage from '$lib/Stage.svelte';
-	import Layer from '$lib/Layer.svelte';
+	import { Layer, Stage, Star, Text } from '$lib';
 	import type Konva from 'konva';
-	import Circle from '$lib/Circle.svelte';
-	import Star from '$lib/Star.svelte';
-	import Arc from '$lib/Arc.svelte';
-	import Arrow from '$lib/Arrow.svelte';
-	import Ellipse from '$lib/Ellipse.svelte';
-	import Image from '$lib/Image.svelte';
-	import Tag from '$lib/Tag.svelte';
-	import Text from '$lib/Text.svelte';
-	import Label from '$lib/Label.svelte';
-	import Line from '$lib/Line.svelte';
-	import Path from '$lib/Path.svelte';
-	import Rect from '$lib/Rect.svelte';
-	import RegularPolygon from '$lib/RegularPolygon.svelte';
-	import Ring from '$lib/Ring.svelte';
-	import Shape from '$lib/Shape.svelte';
-	import Sprite from '$lib/Sprite.svelte';
-	import TextPath from '$lib/TextPath.svelte';
-	import Transformer from '$lib/Transformer.svelte';
-	import Wedge from '$lib/Wedge.svelte';
-	import GenericShape from '$lib/GenericShape.svelte';
+	import { hasContext, onMount } from 'svelte';
+
+	type StarConfig = {
+		id: string;
+		x: number;
+		y: number;
+		rotation: number;
+		isDragging: boolean;
+	};
+
+	function generateShapes() {
+		return [...Array(10)].map((_, i) => ({
+			id: i.toString(),
+			x: Math.random() * window.innerWidth,
+			y: Math.random() * window.innerHeight,
+			rotation: Math.random() * 180,
+			isDragging: false
+		}));
+	}
+
+	let stars: StarConfig[] = [];
+	let windowHeight: number = 0;
+	let windowWidth: number = 0;
 
 	let stage: Konva.Stage;
-	let transformer: Konva.Transformer;
 
-	$: if (stage) {
-		const ring = stage.findOne('#matt');
-		transformer.attachTo(ring);
-	}
+	onMount(() => {
+		stars = generateShapes();
+		windowHeight = window.innerHeight;
+		windowWidth = window.innerWidth;
+
+		console.log(stage);
+	});
 </script>
 
 <Stage
 	bind:stage
 	config={{
-		width: 2000,
-		height: 2000
+		width: windowWidth,
+		height: windowHeight
 	}}
 >
-	<Layer on:click={() => console.log('layer clicked')}>
-		<Transformer bind:transformer />
-
-		<GenericShape
-			shapeName="Circle"
-			config={{
-				id: 'matt',
-				fill: 'red',
-				radius: 50,
-				x: 100,
-				y: 100,
-				draggable: true
-			}}
-			on:mouseover={() => console.log('hey')}
-			on:click={() => console.log('click')}
-			on:dragstart={() => console.log('dragstart')}
-			on:dragmove={() => console.log('dragmove')}
-			on:dragend={() => console.log('dragend')}
-		/>
+	<Layer>
+		<Text content="Click a star and drag" />
+		{#each stars as star (star.id)}
+			<Star
+				config={{
+					id: star.id,
+					name: star.id,
+					x: star.x,
+					y: star.y,
+					numPoints: 5,
+					innerRadius: 20,
+					outerRadius: 40,
+					fill: 'green',
+					opacity: 0.8,
+					draggable: true,
+					rotation: star.rotation,
+					shadowColor: 'black',
+					shadowBlur: 10,
+					shadowOpacity: 0.6,
+					shadowOffsetX: star.isDragging ? 10 : 5,
+					shadowOffsetY: star.isDragging ? 10 : 5,
+					scaleX: star.isDragging ? 1.2 : 1,
+					scaleY: star.isDragging ? 1.2 : 1
+				}}
+				on:dragstart={() => {
+					star.isDragging = true;
+				}}
+				on:dragend={() => {
+					star.isDragging = false;
+				}}
+			/>
+		{/each}
 	</Layer>
 </Stage>

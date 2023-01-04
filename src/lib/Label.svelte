@@ -41,6 +41,11 @@
 			label.destroy();
 		}
 	});
+
+	// Reactive config
+	$: if (label) {
+		label.setAttrs(config);
+	}
 </script>
 
 <slot />
