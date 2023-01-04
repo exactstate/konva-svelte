@@ -46,10 +46,6 @@
 <title>Konva Simple Window drawing</title>
 
 <body>
-	{#each items as item (item.id)}
-		<h1>{item.id}</h1>
-	{/each}
-
 	<Stage
 		config={{
 			...screenDimensions
