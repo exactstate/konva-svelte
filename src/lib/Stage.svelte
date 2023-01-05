@@ -5,27 +5,17 @@
 	import type { StageConfig } from 'konva/lib/Stage';
 	import { addEventDispatchers, addReactiveConfig } from './utils';
 
-	/**
-	 * Props
-	 */
-
 	// Konva object config. Omit 'container' as we handle binding to this ourselves (see HTML of this component)
 	export let config: Omit<StageConfig, 'container'> = {};
-
 	// Reference to underlying Konva object
 	export let stage: Konva.Stage | undefined = undefined;
-
-	/**
-	 * State
-	 */
+	export let responsive: boolean = false;
 
 	// Store previous config to compare against config changes
 	let prevConfig: Omit<StageConfig, 'container'>;
-
 	// Stage store, used to access the stage from other components via Context.
 	// This is a store so that we can update it when the stage is created, or if we need/want to swap out the stage
 	export const stageStore = writable<Konva.Stage | undefined>(undefined);
-
 	// Set stage store in context so that other components can access it
 	setContext('stageStore', stageStore);
 
@@ -51,10 +41,6 @@
 		}
 	}
 
-	/**
-	 * Lifecycle
-	 */
-
 	// Events
 	const dispatch = createEventDispatcher();
 
@@ -70,7 +56,18 @@
 
 		// Update store (context)
 		stageStore.set(stage);
+
+		// If responsive, update stage size on window resize
+		if (responsive) {
+			resizeStageToWindow();
+			window.addEventListener('resize', resizeStageToWindow);
+		}
 	});
+
+	function resizeStageToWindow() {
+		stage?.width(window.innerWidth);
+		stage?.height(window.innerHeight);
+	}
 </script>
 
 <div id="container" />

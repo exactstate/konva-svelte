@@ -26,28 +26,18 @@
 	}
 
 	let stars: StarConfig[] = [];
-	let windowHeight: number = 0;
-	let windowWidth: number = 0;
-
 	let stage: Konva.Stage;
 
 	onMount(() => {
 		stars = generateShapes();
-		windowHeight = window.innerHeight;
-		windowWidth = window.innerWidth;
-
-		console.log(stage);
 	});
 
 	let transformer: Konva.Transformer;
 </script>
 
 <Stage
+	responsive
 	bind:stage
-	config={{
-		width: windowWidth,
-		height: windowHeight
-	}}
 	on:click={(e) => {
 		if (e.detail.target === stage) {
 			stars.forEach((star) => (star.selected = false));
