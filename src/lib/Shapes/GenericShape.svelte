@@ -27,8 +27,10 @@
 		| 'TextPath'
 		| 'Wedge';
 	export let config: Konva.ShapeConfig = {};
-	let prevConfig: Konva.ShapeConfig;
 	export let shape: Konva.Shape | undefined = undefined;
+
+	// State
+	let prevConfig: Konva.ShapeConfig;
 
 	// Handlers
 	function addShapeToLayer(layer: Konva.Layer | Konva.Container | undefined) {
@@ -41,7 +43,9 @@
 	const containerStore = getContext('containerStore') as Writable<
 		Konva.Layer | Konva.Container | undefined
 	>;
-	const unsubscribe = containerStore.subscribe(addShapeToLayer);
+	const unsubscribeFromContainerStore = containerStore.subscribe(addShapeToLayer);
+
+	// Lifecycle
 
 	onMount(() => {
 		if (shapeName === 'Shape') {
@@ -57,7 +61,7 @@
 	});
 
 	onDestroy(() => {
-		unsubscribe();
+		unsubscribeFromContainerStore();
 		if (shape) {
 			shape.destroy();
 		}

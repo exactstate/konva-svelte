@@ -1,9 +1,8 @@
 <script lang="ts">
-	import { onMount, setContext, getContext, onDestroy } from 'svelte';
-	import { get, writable, type Writable } from 'svelte/store';
+	import { onMount, setContext, getContext, onDestroy, createEventDispatcher } from 'svelte';
+	import { writable, type Writable } from 'svelte/store';
 	import Konva from 'konva';
 	import type { LayerConfig } from 'konva/lib/Layer';
-	import { createEventDispatcher } from 'svelte';
 	import { addEventDispatchers, addReactiveConfig } from './utils';
 
 	// Events
@@ -12,30 +11,37 @@
 	// Props
 	export let config: LayerConfig = {};
 	export let layer: Konva.Layer | undefined = undefined;
-	let prevConfig: LayerConfig;
 
-	// Store & Context
+	// State
+	let prevConfig: LayerConfig;
 	const containerStore = writable<Konva.Group | Konva.Layer | undefined>(undefined);
 	setContext('containerStore', containerStore);
 
-	// Stage
+	// Stage State
 	const stageStore = getContext('stageStore') as Writable<Konva.Stage | undefined>;
-	const unsubscribe = stageStore.subscribe((stage) => {
+
+	if (!stageStore) {
+		throw new Error(
+			'No Stage parent found. Make sure you have a <Stage> component as an ancestor of this component.'
+		);
+	}
+
+	const unsubscribeFromStageStore = stageStore.subscribe((stage) => {
 		if (stage && layer) {
 			stage.add(layer);
 		}
 	});
 
+	// Lifecycle
+
 	onMount(() => {
 		layer = new Konva.Layer(config);
-
 		addEventDispatchers(dispatch, layer);
-
 		containerStore.set(layer);
 	});
 
 	onDestroy(() => {
-		unsubscribe();
+		unsubscribeFromStageStore();
 		if (layer) {
 			layer.destroy();
 		}

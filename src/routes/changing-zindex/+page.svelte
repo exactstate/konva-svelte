@@ -6,9 +6,7 @@
 	 * Replicated in Svelte using the component wrapper
 	 */
 
-	import { Circle, Layer, Text } from '$lib';
-	import Rect from '$lib/Shapes/Rect.svelte';
-	import Stage from '$lib/Stage.svelte';
+	import { Circle, Layer, Stage } from '$lib';
 	import Konva from 'konva';
 	import { onMount } from 'svelte';
 

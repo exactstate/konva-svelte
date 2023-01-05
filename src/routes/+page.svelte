@@ -88,10 +88,10 @@
 					transformer.nodes([e.detail.target]);
 					star.selected = true;
 				}}
-				on:dragstart={(e) => {
+				on:dragstart={() => {
 					star.isDragging = true;
 				}}
-				on:dragend={(e) => {
+				on:dragend={() => {
 					star.isDragging = false;
 				}}
 			/>

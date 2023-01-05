@@ -5,32 +5,35 @@
 	import type { StageConfig } from 'konva/lib/Stage';
 	import { addEventDispatchers, addReactiveConfig } from './utils';
 
-	// Events
-	const dispatch = createEventDispatcher();
+	/**
+	 * Props
+	 */
 
-	// Props
+	// Konva object config. Omit 'container' as we handle binding to this ourselves (see HTML of this component)
 	export let config: Omit<StageConfig, 'container'> = {};
+
+	// Reference to underlying Konva object
 	export let stage: Konva.Stage | undefined = undefined;
+
+	/**
+	 * State
+	 */
+
+	// Store previous config to compare against config changes
 	let prevConfig: Omit<StageConfig, 'container'>;
 
-	// Store & Context
+	// Stage store, used to access the stage from other components via Context.
+	// This is a store so that we can update it when the stage is created, or if we need/want to swap out the stage
 	export const stageStore = writable<Konva.Stage | undefined>(undefined);
+
+	// Set stage store in context so that other components can access it
 	setContext('stageStore', stageStore);
-
-	onMount(() => {
-		stage = new Konva.Stage({
-			container: 'container',
-			...config
-		});
-
-		addEventDispatchers(dispatch, stage);
-
-		stageStore.set(stage);
-	});
 
 	// Reactive Config
 	$: {
 		if (stage) {
+			// Update stage config. addReactiveConfig is a helper function that compares the previous config to the new config
+			// and only updates attributes that have changed
 			addReactiveConfig(
 				{
 					container: 'container',
@@ -42,9 +45,32 @@
 				},
 				stage
 			);
+
+			// Update previous config
 			prevConfig = config;
 		}
 	}
+
+	/**
+	 * Lifecycle
+	 */
+
+	// Events
+	const dispatch = createEventDispatcher();
+
+	// Create stage on mount. Konva is a browser-only library, so we can't create the stage on the server
+	onMount(() => {
+		stage = new Konva.Stage({
+			container: 'container',
+			...config
+		});
+
+		// Bind all Konva event listeners to our stage
+		addEventDispatchers(dispatch, stage);
+
+		// Update store (context)
+		stageStore.set(stage);
+	});
 </script>
 
 <div id="container" />
