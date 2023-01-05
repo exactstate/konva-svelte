@@ -1,6 +1,7 @@
 {
 	"name": "svelte-konva-wrapper",
 	"version": "0.0.1",
+	"main": "./package/index.js",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "svelte-kit sync && svelte-package",
@@ -23,6 +24,9 @@
 		"vite": "^4.0.0"
 	},
 	"type": "module",
+	"peerDependencies": {
+		"konva": "^8.3.14"
+	},
 	"dependencies": {
 		"konva": "^8.3.14"
 	}
